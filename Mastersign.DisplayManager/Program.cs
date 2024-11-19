@@ -33,18 +33,22 @@ namespace Mastersign.DisplayManager
             {
                 success = success && ShowConfig(QueryDisplayFlags.OnlyActivePaths);
             }
+            
             if (startInfo.RecordTargetPath != null)
             {
                 success = success && Record(startInfo.RecordTargetPath);
             }
+            
             if (startInfo.RestoreSourcePath != null)
             {
                 success = success && Restore(startInfo.RestoreSourcePath, startInfo.PersistentRestore);
             }
+            
             if (startInfo.Reset && startInfo.RestoreSourcePath == null)
             {
                 success = success && Reset();
             }
+            
             return success ? 0 : -1;
         }
 
@@ -142,9 +146,14 @@ namespace Mastersign.DisplayManager
 
             Debug.WriteLine("---- LOADED CONFIGURATION ---------------");
             Debug.WriteLine(config);
-            Debug.WriteLine("-----PATCHED CONFIGURATION --------------");
-            Manager.PatchDisplayConfig(config);
-            Debug.WriteLine(config);
+            // 原本因為patch是因為adapterId可能會變化（升級driver或是硬體變更）
+            // 但是patch的邏輯是非常有問題的，所以這邊不patch
+            // 真的遇到找不到adapterId（執行完錯誤碼87）
+            // 再手動找出adapterId更新文件也行
+            // 因為發生情況非常少
+            // Debug.WriteLine("-----PATCHED CONFIGURATION --------------");
+            // Manager.PatchDisplayConfig(config);
+            // Debug.WriteLine(config);
 
             Manager.SetDisplayConfig(config, persistent);
         });
